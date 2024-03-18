@@ -3,17 +3,25 @@
 
 #include "Character/AuraEnemy.h"
 
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/AuraAttributeSet.h"
 #include "Aura/Aura.h"
-
-void AAuraEnemy::BeginPlay()
-{
-	Super::BeginPlay();
-}
 
 AAuraEnemy::AAuraEnemy()
 {
 	// Make sure visibility is blocked since it is used for cursor targeting.
 	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	AbilitySystemComponent = CreateDefaultSubobject<UAuraAbilitySystemComponent>("AbilitySystemComponent");
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+	
+	AttributeSet = CreateDefaultSubobject<UAuraAttributeSet>("AttributeSet");
+}
+
+void AAuraEnemy::BeginPlay()
+{
+	Super::BeginPlay();
+	GetAbilitySystemComponent()->InitAbilityActorInfo(this, this);
 }
 
 void AAuraEnemy::HighlightActor()

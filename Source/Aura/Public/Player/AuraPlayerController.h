@@ -18,6 +18,10 @@ UCLASS(Blueprintable)
 class AURA_API AAuraPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
+public:
+	AAuraPlayerController();
+	virtual void PlayerTick(float DeltaTime) override;
 private:
 	void Move(const FInputActionValue& InputActionValue);
 	void CursorTrace();
@@ -35,8 +39,6 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
-public:
-	AAuraPlayerController();
-	virtual void PlayerTick(float DeltaTime) override;	
+
 	
 };
