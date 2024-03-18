@@ -20,11 +20,11 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 void AAuraPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	if (!HasAuthority())
+	check(AuraContext);
+	
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+	if (Subsystem)
 	{
-		check(AuraContext);
-		UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-		check(Subsystem);
 		Subsystem->AddMappingContext(AuraContext, 0);
 
 		bShowMouseCursor = true;
