@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
 #include "AbilitySystemComponent.h"
+#include "GameplayEffectExtension.h"
+#include "GameFramework/Character.h"
 
 #include "AuraAttributeSet.generated.h"
 
@@ -13,6 +15,49 @@
 	GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
+
+
+USTRUCT(BlueprintType)
+struct FEffectProperties
+{
+	GENERATED_BODY()
+
+	FEffectProperties();
+	FEffectProperties(const FGameplayEffectModCallbackData& Data)
+	{
+		EffectContextHandle = Data.EffectSpec.GetContext();
+		SourceASC = EffectContextHandle.GetOriginalInstigatorAbilitySystemComponent();
+	
+		if (!IsValid(SourceASC) || !SourceASC->AbilityActorInfo.IsValid() || !SourceASC->AbilityActorInfo->AvatarActor.IsValid())
+			return;
+
+		SourceAvatarActor = SourceASC->AbilityActorInfo->AvatarActor.Get();
+		SourceController = SourceASC->AbilityActorInfo->PlayerController.Get();
+		if (SourceController == nullptr && SourceAvatarActor != nullptr)
+		{
+			if (const APawn* Pawn = Cast<APawn>(SourceAvatarActor))
+			{
+				SourceController = Pawn->GetController();
+			}
+		}
+	
+		if (SourceController)
+		{
+			SourceCharacter = Cast<ACharacter>(SourceController->GetPawn());
+		}
+	}
+	
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	FGameplayEffectContextHandle EffectContextHandle;
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	UAbilitySystemComponent* SourceASC;
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	AActor* SourceAvatarActor;
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	AController* SourceController;
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	ACharacter* SourceCharacter;
+};
 
 /**
  * 
@@ -26,6 +71,7 @@ public:
 	UAuraAttributeSet();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 	UFUNCTION()
 	void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
