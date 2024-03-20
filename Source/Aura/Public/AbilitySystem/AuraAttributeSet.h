@@ -22,7 +22,7 @@ struct FEffectProperties
 {
 	GENERATED_BODY()
 
-	FEffectProperties();
+	FEffectProperties() = default;
 	FEffectProperties(const FGameplayEffectModCallbackData& Data)
 	{
 		EffectContextHandle = Data.EffectSpec.GetContext();
