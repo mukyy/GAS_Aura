@@ -23,11 +23,12 @@ struct FEffectProperties
 	GENERATED_BODY()
 
 	FEffectProperties() = default;
+
 	FEffectProperties(const FGameplayEffectModCallbackData& Data)
 	{
 		EffectContextHandle = Data.EffectSpec.GetContext();
 		SourceASC = EffectContextHandle.GetOriginalInstigatorAbilitySystemComponent();
-	
+
 		if (!IsValid(SourceASC) || !SourceASC->AbilityActorInfo.IsValid() || !SourceASC->AbilityActorInfo->AvatarActor.IsValid())
 			return;
 
@@ -40,13 +41,13 @@ struct FEffectProperties
 				SourceController = Pawn->GetController();
 			}
 		}
-	
+
 		if (SourceController)
 		{
 			SourceCharacter = Cast<ACharacter>(SourceController->GetPawn());
 		}
 	}
-	
+
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	FGameplayEffectContextHandle EffectContextHandle;
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
@@ -69,6 +70,8 @@ class AURA_API UAuraAttributeSet : public UAttributeSet
 
 public:
 	UAuraAttributeSet();
+
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
@@ -84,7 +87,7 @@ public:
 
 	UFUNCTION()
 	void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
-	
+
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Vital Attributes")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Health);
@@ -100,5 +103,4 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxMana, Category = "Vital Attributes")
 	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, MaxMana);
-
 };
