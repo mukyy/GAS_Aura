@@ -70,4 +70,7 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Effects")
 	TSubclassOf<UGameplayEffect> InfiniteGameplayEffectClass;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Effects")
+	float ActorLevel = 1.f;
 };
